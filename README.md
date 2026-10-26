@@ -4,6 +4,39 @@
 
 当前版本：**Phase 1 MVP**（附带部分 Phase 2 / P1 能力，见文末“实现状态”）。
 
+![收藏馆页面](docs/screenshots/library.png)
+
+![播放页：黑胶唱片与滚动歌词](docs/screenshots/now-playing.png)
+
+<p align="center">
+  <img src="docs/screenshots/mobile-player.png" width="260" alt="手机播放页" />
+  &nbsp;&nbsp;
+  <img src="docs/screenshots/mobile-lyrics.png" width="260" alt="手机歌词页" />
+</p>
+
+<sub>截图使用 `scripts/make_test_audio.py` 生成的合成测试曲目，歌词为示例文字。</sub>
+
+## 架构
+
+```mermaid
+flowchart LR
+    subgraph local["你的电脑 / NAS（不经过任何云端）"]
+        api["FastAPI 服务<br/>导入 · 元数据 · 音频流"]
+        db[("SQLite<br/>曲目 · 收藏馆 · 备注 · 歌词")]
+        files["MusicArchive/audio<br/>原始音频（归档母版）"]
+        inbox["import/ 收件箱"]
+    end
+    desktop["桌面应用窗口<br/>（Edge / Chrome 应用模式）"] -- "HTTP :8000" --> api
+    phone["手机浏览器<br/>（同一 Wi-Fi，可选）"] -. "HTTP :8000" .-> api
+    inbox -- "扫描导入" --> api
+    api --> db
+    api --> files
+```
+
+- **音频与数据分离**：音频是普通文件，按 `歌手/专辑/歌名` 存放；SQLite 里只存元数据和路径，不存音频本身。
+- **收藏馆是逻辑分组**：一首歌可以同时属于多个收藏馆和歌单，磁盘上只存一份。
+- **前端**：React + TypeScript + Vite + Tailwind，构建后由 FastAPI 直接提供，不需要单独的网页服务器。
+
 ## 快速开始（Windows / macOS / Linux）
 
 需要 Python 3.11+ 与 Node.js 20+。
