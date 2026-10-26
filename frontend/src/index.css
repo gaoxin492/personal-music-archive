@@ -1,0 +1,97 @@
+@import "tailwindcss";
+
+/* Design language: deep black, warm grey, walnut. Dark first. */
+@theme {
+  --color-ink: #0c0b0a;
+  --color-coal: #141210;
+  --color-smoke: #1c1916;
+  --color-line: #2a2622;
+  --color-ash: #8e867d;
+  --color-mist: #b9b1a7;
+  --color-bone: #ebe5dc;
+  --color-walnut: #7a5536;
+  --color-walnut-light: #b0855c;
+  --color-ember: #c4553f;
+
+  --font-serif: "Iowan Old Style", "Palatino Linotype", Palatino, "Songti SC", "Noto Serif SC", "Noto Serif CJK SC", "Source Han Serif SC", "SimSun", Georgia, serif;
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans", "Microsoft YaHei", "Noto Sans CJK SC", system-ui, sans-serif;
+}
+
+:root {
+  color-scheme: dark;
+  /* per-collection mood colour, overridden on collection pages */
+  --mood: #7a5536;
+}
+
+html, body, #root {
+  height: 100%;
+}
+
+body {
+  background: var(--color-ink);
+  color: var(--color-bone);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+}
+
+::selection { background: color-mix(in oklab, var(--color-walnut) 60%, transparent); }
+
+* { scrollbar-width: thin; scrollbar-color: #2e2a26 transparent; }
+
+/* Range inputs: thin warm track that thickens on hover */
+input[type="range"].seek {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 4px;
+  border-radius: 999px;
+  background: linear-gradient(to right, var(--color-walnut-light) var(--pct, 0%), #34302b var(--pct, 0%));
+  cursor: pointer;
+  outline: none;
+}
+input[type="range"].seek::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 12px; height: 12px; border-radius: 50%;
+  background: var(--color-bone);
+  opacity: 0; transition: opacity .15s;
+}
+input[type="range"].seek:hover::-webkit-slider-thumb,
+input[type="range"].seek:focus-visible::-webkit-slider-thumb { opacity: 1; }
+input[type="range"].seek::-moz-range-thumb {
+  width: 12px; height: 12px; border: 0; border-radius: 50%; background: var(--color-bone);
+}
+
+/* Vinyl record */
+.vinyl {
+  border-radius: 50%;
+  background:
+    radial-gradient(circle, transparent 0 31%, rgba(255,255,255,.035) 31.4% 31.8%, transparent 32.2%),
+    repeating-radial-gradient(circle, #111 0 1.2px, #181614 1.6px 2.6px),
+    #111;
+  box-shadow: 0 30px 80px -20px rgba(0,0,0,.8), inset 0 0 0 2px #050505;
+  /* no `position` here: unlayered CSS would override Tailwind's `absolute` utility */
+}
+.vinyl::after { /* light sheen */
+  content: ""; position: absolute; inset: 0; border-radius: 50%;
+  background: conic-gradient(from 30deg, transparent 0 12%, rgba(255,255,255,.06) 18%, transparent 26% 62%, rgba(255,255,255,.05) 68%, transparent 76%);
+  pointer-events: none;
+}
+.spin { animation: spin 9s linear infinite; }
+.spin.paused { animation-play-state: paused; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .spin { animation: none; }
+}
+
+.eq span { display: inline-block; width: 2px; margin: 0 1px; background: var(--color-walnut-light); animation: eq 1s ease-in-out infinite; }
+.eq span:nth-child(2) { animation-delay: -.4s; }
+.eq span:nth-child(3) { animation-delay: -.7s; }
+@keyframes eq { 0%,100% { height: 3px; } 50% { height: 12px; } }
+.eq.paused span { animation-play-state: paused; }
+
+.pb-safe { padding-bottom: env(safe-area-inset-bottom); }
+
+.section-title {
+  @apply text-[11px] uppercase tracking-[0.16em] text-ash mb-3;
+}
